@@ -1,0 +1,10 @@
+version: 0.0
+Resources:
+  - myLambdaFunction:
+      Type: AWS::Lambda::Function
+      Properties:
+        FunctionName: java-gradle-fn
+        Alias: live
+        Code:
+          S3Bucket: javaartifacts
+   
