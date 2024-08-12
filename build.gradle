@@ -7,7 +7,7 @@ buildscript {
     }
 }
 
-//Community Plugins
+// Community Plugins
 plugins {
     id("com.diffplug.spotless") version "5.6.1"
     id("com.google.cloud.tools.jib") version "3.1.4"
@@ -25,7 +25,8 @@ apply plugin: 'io.spring.dependency-management'
 
 bootJar {
     baseName = 'VulnerableApp'
-    version =  '1.0.0'
+    version = '1.0.0'
+    mainClassName = 'org.sasanlabs.Application' // Set your main class here
 }
 
 configurations {
@@ -41,32 +42,32 @@ repositories {
 }
 
 sonarqube {
-  properties {
-    property "sonar.projectKey", "SasanLabs_VulnerableApp"
-    property "sonar.organization", "sasanlabs"
-    property "sonar.host.url", "https://sonarcloud.io"
-  }
+    properties {
+        property "sonar.projectKey", "SasanLabs_VulnerableApp"
+        property "sonar.organization", "sasanlabs"
+        property "sonar.host.url", "https://sonarcloud.io"
+    }
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
 
-//spotless {
+// Spotless configuration (commented out for now)
+// spotless {
 //    java {
-//        // Don't enforce the license, just the format.
 //        clearSteps()
 //        googleJavaFormat().aosp()
 //    }
 //    format 'javascript', {
-//    	target 'src/main/resources/**/*.js'
-//    	prettier().config(['filepath': 'file.js'])
-//  	}
-//} 
+//        target 'src/main/resources/**/*.js'
+//        prettier().config(['filepath': 'file.js'])
+//    }
+// }
 
 jib {
-	from {
-    	  image = 'openjdk:8-jre-alpine'
-  	}
+    from {
+        image = 'openjdk:8-jre-alpine'
+    }
     to {
         image = 'sasanlabs/owasp-vulnerableapp:unreleased'
     }
@@ -77,19 +78,19 @@ jacoco {
     reportsDir = file("$buildDir/jacoco")
 }
 
-tasks.register('GenerateSampleVulnerability'){
-	group = 'SasanLabs'
-	description = 'Generates Sample Vulnerability template'
-	println 'Copying SampleVulnerability java file to org.sasanlabs.service.vulnerability.sampleVulnerability package'
-	copy {
-    	from(file('src/main/resources/sampleVulnerability/sampleVulnerability'))
-    	into(file('src/main/java/org/sasanlabs/service/vulnerability/sampleVulnerability'))
+tasks.register('GenerateSampleVulnerability') {
+    group = 'SasanLabs'
+    description = 'Generates Sample Vulnerability template'
+    println 'Copying SampleVulnerability java file to org.sasanlabs.service.vulnerability.sampleVulnerability package'
+    copy {
+        from(file('src/main/resources/sampleVulnerability/sampleVulnerability'))
+        into(file('src/main/java/org/sasanlabs/service/vulnerability/sampleVulnerability'))
     }
     println 'Copy of java file is completed'
     println 'Copying SampleVulnerability html/css/js files to static/templates/SampleVulnerability/LEVEL_1'
     copy {
-    	from(file('src/main/resources/sampleVulnerability/staticResources/LEVEL_1'))
-    	into(file('src/main/resources/static/templates/SampleVulnerability/LEVEL_1'))
+        from(file('src/main/resources/sampleVulnerability/staticResources/LEVEL_1'))
+        into(file('src/main/resources/static/templates/SampleVulnerability/LEVEL_1'))
     }
     println 'Copy of html/css/js files is completed'
     println 'SampleVulnerability is generated !!!'
@@ -97,39 +98,21 @@ tasks.register('GenerateSampleVulnerability'){
 
 dependencies {
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
-
-    // https://mvnrepository.com/artifact/org.mockito/mockito-core
-    testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.5.13'
-
-    // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.7.0'
-
-    // https://mvnrepository.com/artifact/org.assertj/assertj-core
-    testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.17.2'
-
-    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-jpa
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '2.3.1.RELEASE'
-
-    runtimeOnly group:'com.h2database', name:'h2', version: '1.3.176'
-    
-    // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+    runtimeOnly group: 'com.h2database', name: 'h2', version: '1.3.176'
     implementation group: 'org.apache.commons', name: 'commons-text', version: '1.8'
-	//Log4j Dependencies
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-log4j2'
-
-    // https://mvnrepository.com/artifact/org.json/json
     implementation group: 'org.json', name: 'json', version: '20190722'
-
-	//https://mvnrepository.com/artifact/com.nimbusds/nimbus-jose-jwt
     implementation group: 'com.nimbusds', name: 'nimbus-jose-jwt', version: '8.3'
-
-    // https://mvnrepository.com/artifact/commons-io/commons-io
     implementation group: 'commons-io', name: 'commons-io', version: '2.7'
-    
     implementation group: 'io.github.sasanlabs', name: 'facade-schema', version: '1.0.1'
-
     implementation 'com.amazonaws:aws-lambda-java-core:1.2.1'
     implementation 'com.amazonaws:aws-lambda-java-events:3.8.0'
+
+    // Testing dependencies
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.5.13'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.7.0'
+    testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.17.2'
 }
 
 test {
@@ -140,9 +123,9 @@ test {
 jacocoTestReport {
     dependsOn test
     reports {
-            xml.enabled true
-            html.enabled true
-            csv.enabled false
-            xml.destination file("${buildDir}/reports/jacoco.xml")
+        xml.enabled true
+        html.enabled true
+        csv.enabled false
+        xml.destination file("${buildDir}/reports/jacoco.xml")
     }
 }
